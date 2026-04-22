@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# Streamlit cache/config lokal
+.streamlit/
+
+# FAISS-Indizes und Metadaten
+*.faiss
+data/evidence/index.meta.json
+data/faiss_index/
+
+# Modell-Gewichte (große Binärdateien)
+*.bin
+*.pt
+*.pth
+*.safetensors
+*.gguf
+
+# Evaluations-Ergebnisse
+evaluation/results/
+
+# IDE-Configs
+.idea/
+.vscode/
+.claude/
+
+# Logs
+*.log
