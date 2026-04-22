@@ -201,4 +201,4 @@ It is **not** a certified medical decision-support system and should not be used
 
 **Laurence Douda**  
 Master’s thesis project, FH St. Pölten
-& Claude Opus 4.6
+& Claude Opus 4.6 & 4.7
