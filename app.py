@@ -5,14 +5,17 @@ from ui.components import (
     render_source_cards,
     render_detail_table,
 )
+from config import PIPELINE_MODES
 
 st.set_page_config(page_title="Health Factchecker", page_icon="🩺", layout="wide")
 inject_css()
 
+MODE_OPTIONS = list(PIPELINE_MODES.keys())
+
 with st.sidebar:
     st.header("Pipeline Configuration")
 
-    mode = st.radio("Pipeline mode", ["Baseline", "RAG-only", "RAG+NLI"], index=2)
+    mode = st.radio("Pipeline mode", MODE_OPTIONS, index=2)
 
     st.divider()
 
@@ -35,11 +38,7 @@ with st.sidebar:
     llm_choice = st.selectbox("Model", ["qwen3", "mistral"])
     top_k = st.slider("Top-k passages", 1, 15, 5)
 
-MODE_DESCRIPTIONS = {
-    "Baseline": "LLM only — no retrieval, no NLI",
-    "RAG-only": "FAISS retrieval + LLM",
-    "RAG+NLI":  "Full pipeline — retrieval + NLI + LLM",
-}
+MODE_DESCRIPTIONS = {name: cfg["description"] for name, cfg in PIPELINE_MODES.items()}
 
 st.title("🩺 Health Factchecker")
 st.caption(f"Active mode: **{mode}** — {MODE_DESCRIPTIONS[mode]}")
@@ -55,8 +54,9 @@ if submitted and claim.strip():
     nli: list[dict] = []
     verdict_result: dict = {}
 
-    use_retrieval = mode in ("RAG-only", "RAG+NLI")
-    use_nli = mode == "RAG+NLI"
+    mode_cfg = PIPELINE_MODES[mode]
+    use_retrieval = mode_cfg["use_retrieval"]
+    use_nli = mode_cfg["use_nli"]
 
     steps = []
     if use_retrieval:
