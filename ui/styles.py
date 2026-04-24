@@ -31,6 +31,13 @@ def inject_css():
         background: #e2e3e5; border-left: 5px solid #6c757d;
         padding: 1rem; border-radius: 6px; margin-bottom: 1rem;
     }
+    /*Update: abstain verdict (NOT_ENOUGH_EVIDENCE). 
+    Neutral grey so users don't read it as red = bad or green = good.*/ 
+    
+    .verdict-not-enough-evidence {
+        background: #e9ecef; border-left: 5px solid #495057;
+        padding: 1rem; border-radius: 6px; margin-bottom: 1rem;
+    }
 
     /* Source cards */
 
