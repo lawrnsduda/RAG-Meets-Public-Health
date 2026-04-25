@@ -21,10 +21,6 @@ _index = None
 _metadata: list[dict] = []
 
 def load_model():
-
-    """Load the embedding model. Only does the actual loading on the first call,
-    after that it just returns the cached instance."""
-
     global _model
     if _model is None:
         from sentence_transformers import SentenceTransformer
@@ -32,15 +28,12 @@ def load_model():
     return _model
 
 def load_index():
-
-    """Load the FAISS index + the metadata JSON that goes with it.
-    The .faiss file only has the vectors, so we need the .meta.json
-    to know which text/source/url belongs to which vector position."""
-
+    # The .faiss file only has the vectors, so we need the sidecar
+    # .meta.json to know which text/source/url each vector came from.
     global _index, _metadata
     if _index is not None:
         return _index, _metadata
-    
+
     import faiss
     index_path = Path(FAISS_INDEX_PATH)
     meta_path = index_path.with_suffix(".meta.json")
@@ -50,7 +43,7 @@ def load_index():
             f"FAISS index not found at {index_path}. "
             "Run the indexing step first (see data/build_index.py)."
         )
-    
+
     _index = faiss.read_index(str(index_path))
     if meta_path.exists():
         with open(meta_path, "r", encoding="utf-8") as f:
@@ -65,22 +58,14 @@ def retrieve_evidence(
     top_k: int = TOP_K,
     sources: list[str] | None = None,
 ) -> list[dict]:
-    
-    """
-    Main function – takes a claim string and returns the top-k most
-    relevant evidence passages from the index.
- 
-    If `sources` is set (e.g. ["WHO", "CDC"]) we only keep passages
-    from those sources. In that case we fetch 3x more candidates from
-    FAISS first, because a lot of them will get filtered out.
-    """
-
     model = load_model()
     index, metadata = load_index()
 
     query_vec = model.encode([claim], normalize_embeddings=True)
     query_vec = np.array(query_vec, dtype="float32")
 
+    # Over-fetch when source-filtering, otherwise the filter can leave
+    # us with fewer than top_k results.
     search_k = top_k * 3 if sources else top_k
     distances, indices = index.search(query_vec, search_k)
 

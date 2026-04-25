@@ -1,13 +1,8 @@
 """
 Configuration for Health FactChecker project.
 
-Central place for all settings, paths, model names, and API keys.
-Everything that might change between environments (local vs FH server,
-different models, etc.) is defined here so I only have to update
-one file.
-
-API keys f.ex. are loaded from a .env file so they don't
-end up in git.
+Central place for settings, paths, model names, and API keys so the
+project works the same on my laptop and on the FH server.
 """
 import os
 from pathlib import Path
@@ -21,22 +16,42 @@ PROJECT_ROOT = Path(__file__).parent
 DATA_DIR = PROJECT_ROOT / "data"
 EVIDENECE_DIR = DATA_DIR / "evidence"
 FAISS_INDEX_PATH = DATA_DIR / "evidence" / "index.faiss"
+CLAIMS_CSV = DATA_DIR / "measles_claims_dataset.csv"
 
 PIPELINE_MODES = {
     "Baseline": {
         "description": "LLM only - no retrieval, no NLI",
         "use_retrieval": False,
         "use_nli": False,
+        "use_abstain": False,
     },
     "RAG-only": {
         "description": "FAISS retrieval + LLM, no NLI",
         "use_retrieval": True,
         "use_nli": False,
+        "use_abstain": False,
     },
     "RAG+NLI": {
         "description": "Full pipeline - retrieval + LLM + NLI",
         "use_retrieval": True,
         "use_nli": True,
+        "use_abstain": False,
+    },
+    # --- Abstain variants (4-class: adds NOT_ENOUGH_EVIDENCE) ---
+    # Based on the AVeriTeC label scheme (Schlichtkrull et al., 2023).
+    # The model can now say "not enough evidence" instead of guessing
+    # a wrong REFUTED verdict when retrieval is weak.
+    "RAG-only+Abstain": {
+        "description": "RAG-only, but model can abstain (NOT_ENOUGH_EVIDENCE)",
+        "use_retrieval": True,
+        "use_nli": False,
+        "use_abstain": True,
+    },
+    "RAG+NLI+Abstain": {
+        "description": "RAG+NLI, but model can abstain (NOT_ENOUGH_EVIDENCE)",
+        "use_retrieval": True,
+        "use_nli": True,
+        "use_abstain": True,
     },
 }
 
@@ -69,4 +84,11 @@ EVIDENCE_SOURCES = {
     "PubMed": {"enabled": True, "label": "NCBI E-utilities"},
 }
 
+# Ground-truth labels in the dataset (3-class).
 EVAL_LABELS = ["SUPPORTED", "REFUTED", "MISLEADING"]
+
+# Prediction labels in Abstain modes (4-class).
+# NOT_ENOUGH_EVIDENCE is a *prediction-only* label — the dataset itself
+# still contains only the 3 EVAL_LABELS, so no dataset rework is needed.
+ABSTAIN_LABEL = "NOT_ENOUGH_EVIDENCE"
+EVAL_LABELS_WITH_ABSTAIN = EVAL_LABELS + [ABSTAIN_LABEL]

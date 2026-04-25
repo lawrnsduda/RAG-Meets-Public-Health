@@ -57,7 +57,6 @@ HEADERS = {
 
 
 def fetch_soda_dataset(url: str, label: str, params: dict) -> list[dict]:
-    """Fetch structured data from CDC SODA API."""
     print(f"  Fetching {label}…")
     try:
         resp = requests.get(url, params=params, headers=HEADERS, timeout=30)
@@ -71,7 +70,6 @@ def fetch_soda_dataset(url: str, label: str, params: dict) -> list[dict]:
 
 
 def fetch_page_text(url: str, label: str) -> dict:
-    """Fetch text content from a CDC page for evidence corpus."""
     from bs4 import BeautifulSoup
 
     print(f"  Fetching {label}…")
@@ -104,7 +102,6 @@ def fetch_page_text(url: str, label: str) -> dict:
 
 
 def run():
-    # 1. Structured data via SODA API
     print("  — SODA API (structured data) —")
     for ds in CDC_DATASETS:
         data = fetch_soda_dataset(ds["url"], ds["label"], ds["params"])
@@ -115,7 +112,6 @@ def run():
                 json.dump(data, f, indent=2, ensure_ascii=False)
             print(f"  → Saved to {out_path}")
 
-    # 2. Text content from fact sheets (for RAG evidence corpus)
     print("  — Fact sheets (text content) —")
     for page in CDC_PAGES:
         data = fetch_page_text(page["url"], page["label"])

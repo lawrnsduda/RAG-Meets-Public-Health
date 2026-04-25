@@ -1,9 +1,6 @@
 """
-UI Preview — no pipeline, just streamlit + pandas.
-
-This is just a preview. It doesn't actually do anything –  it uses hardcoded dummy
-data. So I can develop and test the UI components without needing
-Ollama, FAISS, or any models running. Once the real pipeline is finished, this file gets replaced by app.py.
+UI preview with hardcoded dummy data, so the UI can be developed without
+Ollama, FAISS, or any models running.
 """
 import streamlit as st
 import time
@@ -43,7 +40,6 @@ with st.sidebar:
 st.title("🩺 Health Factchecker")
 st.caption("Active mode: **RAG+NLI** — Full pipeline — retrieval + NLI + LLM")
 
-# st.form prevents re-runs on every keystroke.
 with st.form("claim_form"):
     claim = st.text_input(
         "Enter a health claim to verify:",

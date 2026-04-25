@@ -15,11 +15,6 @@ _classifier = None
 
 
 def _load_model():
-
-    """Load tokenizer + model from HuggingFace.
-    Only happens once, then it's cached in the global _classifier variable.
-    We call model.eval() so things like dropout are turned off during inference."""
- 
     global _classifier
     if _classifier is None:
         from transformers import (
@@ -31,7 +26,7 @@ def _load_model():
         model = AutoModelForSequenceClassification.from_pretrained(
             NLI_MODEL
         )
-        model.eval() 
+        model.eval()
         _classifier = (tokenizer, model)
     return _classifier
 
@@ -40,12 +35,6 @@ def classify_nli(
     claim: str,
     evidence_passages: list[dict],
 ) -> list[dict]:
-    
-    """
-    Classify each (claim, passage) pair.
-    Returns list of dicts with keys: label, scores
-    """
-    
     import torch
 
     tokenizer, model = _load_model()
@@ -60,8 +49,8 @@ def classify_nli(
             return_tensors="pt",
         )
         with torch.no_grad():
-            logits = model(**encoded).logits 
-            probs = torch.softmax(logits, dim=-1).squeeze().tolist() # convert to probabilities
+            logits = model(**encoded).logits
+            probs = torch.softmax(logits, dim=-1).squeeze().tolist()
 
         score_map = {
             NLI_LABELS[i]: round(probs[i], 4) for i in range(3)

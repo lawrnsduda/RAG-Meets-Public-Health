@@ -1,25 +1,15 @@
 """
 Sidebar: pipeline mode, evidence sources, model selection.
 
-This is the "production" version of the sidebar it reads its options
-from config.py. In app_preview.py the sidebar is hardcoded, because we don't need real config for the UI preview.
-When the real pipeline is working, app.py uses this module instead so
-everything stays in sync with the config.
+Production version that reads its options from config.py, so app.py
+stays in sync with the config. app_preview.py uses a hardcoded sidebar
+instead.
 """
 import streamlit as st
 from config import PIPELINE_MODES, EVIDENCE_SOURCES, TOP_K
 
 
 def render_sidebar() -> tuple[str, list[str], str, int]:
-    """
-    Render the sidebar and return the user's selections.
-
-    Returns a tuple of:
-      - mode:             which pipeline mode to run ("Baseline", "RAG-only", "RAG+NLI")
-      - selected_sources: list of source keys the user checked (f.ex. ["WHO", "CDC"])
-      - llm_choice:       which Ollama model to use ("qwen3:8b" or "mistral:7b")
-      - top_k:            how many evidence passages to retrieve
-    """
     with st.sidebar:
         st.header("Pipeline Configuration")
 
