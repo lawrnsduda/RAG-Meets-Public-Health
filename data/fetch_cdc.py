@@ -9,7 +9,6 @@ from pathlib import Path
 OUTPUT_DIR = Path(__file__).parent / "evidence" / "cdc"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# CDC SODA API endpoints (data.cdc.gov)
 CDC_DATASETS = [
     {
         "label": "NNDSS — Measles weekly cases",
@@ -31,7 +30,6 @@ CDC_DATASETS = [
     },
 ]
 
-# CDC fact sheet pages (text content, still fetched via requests)
 CDC_PAGES = [
     {
         "url": "https://www.cdc.gov/measles/about/index.html",

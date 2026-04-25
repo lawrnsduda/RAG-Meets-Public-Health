@@ -1,13 +1,9 @@
-"""
-Custom CSS for the Health Factchecker UI.
-
-Injected via st.markdown(unsafe_allow_html=True) because Streamlit
-doesn't expose easy per-element styling. Call once after set_page_config.
-"""
+"""Custom CSS for the Health Factchecker UI."""
 import streamlit as st
 
 
 def inject_css():
+    """Inject all custom styles. Call once on app startup."""
     st.markdown("""
     <style>
 
@@ -27,8 +23,6 @@ def inject_css():
         background: #e2e3e5; border-left: 5px solid #6c757d;
         padding: 1rem; border-radius: 6px; margin-bottom: 1rem;
     }
-    /* Abstain verdict (NOT_ENOUGH_EVIDENCE): neutral grey so users
-       don't read it as red = bad or green = good. */
     .verdict-not-enough-evidence {
         background: #e9ecef; border-left: 5px solid #495057;
         padding: 1rem; border-radius: 6px; margin-bottom: 1rem;

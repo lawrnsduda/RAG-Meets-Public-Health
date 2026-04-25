@@ -1,14 +1,4 @@
-"""
-Automatic hallucination detection via NLI.
-
-For each sentence in a generated justification, we run the same DeBERTa
-NLI model used in the RAG+NLI pipeline against the claim + evidence
-passages and classify it as contradicted (major), entailed (supported),
-or neither (minor/unsupported). Per-justification these aggregate into
-hallucination-free / minor / major, matching Section 5.5.1 of the thesis.
-A stratified subsample should still be manually validated; Baseline has
-no evidence, so the automatic check is only weakly meaningful there.
-"""
+"""Automatic hallucination detection via NLI (per-sentence check)."""
 
 from __future__ import annotations
 import re
@@ -17,7 +7,6 @@ from pipeline.nli import classify_nli
 
 
 MIN_SENTENCE_LENGTH = 15
-
 NLI_CONFIDENCE_THRESHOLD = 0.6
 
 
@@ -54,6 +43,8 @@ def _check_support_and_contradiction(
         max_contra = 0.0
         is_contradicted = False
 
+    # Contradiction takes priority: a sentence that contradicts evidence
+    # is a major hallucination even if it's also entailed by the claim.
     if is_contradicted:
         status = "contradicted"
     elif is_supported:
@@ -86,23 +77,22 @@ def check_hallucination(
             "sentences": [],
         }
 
-    grounding_premises: list[dict] = [
-        {"text": claim, "source": "claim"}
-    ]
+    # Grounding set: claim + evidence.
+    grounding_premises: list[dict] = [{"text": claim, "source": "claim"}]
     for ev in evidence:
         grounding_premises.append(
             {"text": ev["text"], "source": ev.get("source", "?")}
         )
 
+    # Contradiction set: evidence only (the claim is excluded because
+    # a REFUTED justification should contradict the claim by design).
     contradiction_premises: list[dict] = [
         {"text": ev["text"], "source": ev.get("source", "?")}
         for ev in evidence
     ]
 
     analyses = [
-        _check_support_and_contradiction(
-            s, grounding_premises, contradiction_premises
-        )
+        _check_support_and_contradiction(s, grounding_premises, contradiction_premises)
         for s in sentences
     ]
 
@@ -129,9 +119,7 @@ def check_hallucination(
     }
 
 
-def aggregate_hallucination_stats(
-    per_claim_results: list[dict],
-) -> dict:
+def aggregate_hallucination_stats(per_claim_results: list[dict]) -> dict:
     if not per_claim_results:
         return {}
 
@@ -172,6 +160,7 @@ def stratified_sample(
     n_per_category: int = 7,
     seed: int = 42,
 ) -> list[dict]:
+    """Stratified sample by automatic category for manual validation."""
     import random
     rng = random.Random(seed)
 
@@ -206,8 +195,7 @@ def stratified_sample(
             "justification": d.get("justification", ""),
             "auto_category": h["category"],
             "auto_grounding_rate": h["grounding_rate"],
-            # To be filled in manually:
-            "manual_category": "",  # hallucination_free | minor_hallucination | major_hallucination
+            "manual_category": "",
             "annotator_notes": "",
         })
     return rows

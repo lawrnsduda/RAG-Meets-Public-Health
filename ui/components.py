@@ -1,21 +1,21 @@
-"""
-Reusable UI components for the results section: verdict box, source
-cards, detail table. CSS classes come from ui/styles.py.
-"""
+"""Reusable UI components for displaying results."""
 import streamlit as st
 
 
 def render_verdict_box(verdict: str, justification: str) -> None:
     css_class = {
-        "SUPPORTED":  "verdict-supported",
-        "REFUTED":    "verdict-refuted",
-        "MISLEADING": "verdict-misleading",
+        "SUPPORTED":           "verdict-supported",
+        "REFUTED":             "verdict-refuted",
+        "MISLEADING":          "verdict-misleading",
+        "NOT_ENOUGH_EVIDENCE": "verdict-not-enough-evidence",
     }.get(verdict.upper(), "verdict-unknown")
+
+    display_verdict = verdict.replace("_", " ")
 
     st.markdown(
         f"""
         <div class="{css_class}">
-            <strong>Verdict: {verdict}</strong><br>{justification}
+            <strong>Verdict: {display_verdict}</strong><br>{justification}
         </div>
         """,
         unsafe_allow_html=True,

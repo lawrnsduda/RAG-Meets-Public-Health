@@ -44,9 +44,7 @@ st.title("🩺 Health Factchecker")
 st.caption(f"Active mode: **{mode}** — {MODE_DESCRIPTIONS[mode]}")
 
 with st.form("claim_form"):
-    claim = st.text_input(
-        "Enter a health claim to verify:",
-    )
+    claim = st.text_input("Enter a health claim to verify:")
     submitted = st.form_submit_button("Check claim", type="primary")
 
 if submitted and claim.strip():
@@ -57,13 +55,6 @@ if submitted and claim.strip():
     mode_cfg = PIPELINE_MODES[mode]
     use_retrieval = mode_cfg["use_retrieval"]
     use_nli = mode_cfg["use_nli"]
-
-    steps = []
-    if use_retrieval:
-        steps.append(("Retrieving evidence from index…", 33))
-    if use_nli:
-        steps.append(("Running NLI classification…", 66))
-    steps.append((f"Generating verdict with {llm_choice}…", 100))
 
     progress = st.progress(0, text="Starting…")
 
@@ -89,11 +80,13 @@ if submitted and claim.strip():
 
         progress.progress(70, text=f"Generating verdict with {llm_choice}… 70%")
         from pipeline.verdict import generate_verdict
-        verdict_result = generate_verdict(claim, evidence, nli, mode, llm_choice)
+        verdict_result = generate_verdict(
+            claim, evidence, nli, mode, llm_choice, use_abstain=True,
+        )
         progress.progress(100, text="Done. 100%")
         progress.empty()
 
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         st.error(
             "**FAISS index not found.** "
             "Run the following commands first:\n\n"
