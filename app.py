@@ -17,6 +17,17 @@ with st.sidebar:
 
     mode = st.radio("Pipeline mode", MODE_OPTIONS, index=2)
 
+    use_abstain = st.checkbox(
+        "Allow abstention (NOT_ENOUGH_EVIDENCE)",
+        value=True,
+        help=(
+            "When enabled, the model can output NOT_ENOUGH_EVIDENCE "
+            "instead of guessing. Useful when retrieved evidence is "
+            "insufficient or the claim is out of domain. "
+            "Disable to force a 3-class verdict for comparison."
+        ),
+    )
+
     st.divider()
 
     st.subheader("Evidence Sources")
@@ -41,7 +52,8 @@ with st.sidebar:
 MODE_DESCRIPTIONS = {name: cfg["description"] for name, cfg in PIPELINE_MODES.items()}
 
 st.title("🩺 Health Factchecker")
-st.caption(f"Active mode: **{mode}** — {MODE_DESCRIPTIONS[mode]}")
+caption_extra = " · Abstention enabled" if use_abstain else " · Abstention disabled"
+st.caption(f"Active mode: **{mode}**{caption_extra} — {MODE_DESCRIPTIONS[mode]}")
 
 with st.form("claim_form"):
     claim = st.text_input("Enter a health claim to verify:")
@@ -81,7 +93,7 @@ if submitted and claim.strip():
         progress.progress(70, text=f"Generating verdict with {llm_choice}… 70%")
         from pipeline.verdict import generate_verdict
         verdict_result = generate_verdict(
-            claim, evidence, nli, mode, llm_choice, use_abstain=True,
+            claim, evidence, nli, mode, llm_choice, use_abstain=use_abstain,
         )
         progress.progress(100, text="Done. 100%")
         progress.empty()

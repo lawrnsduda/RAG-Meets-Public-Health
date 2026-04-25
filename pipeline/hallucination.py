@@ -157,10 +157,14 @@ def aggregate_hallucination_stats(per_claim_results: list[dict]) -> dict:
 def stratified_sample(
     per_claim_results: list[dict],
     details: list[dict],
-    n_per_category: int = 7,
+    n_per_category: int = 3,
     seed: int = 42,
 ) -> list[dict]:
-    """Stratified sample by automatic category for manual validation."""
+    """Stratified sample by automatic category for manual validation.
+
+    Default n_per_category=3 -> up to 9 items per condition (3 from each
+    of major/minor/free) -> ~108 items total across 6 conditions and 2 LLMs.
+    """
     import random
     rng = random.Random(seed)
 

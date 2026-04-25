@@ -98,9 +98,11 @@ def write_sample_csv(
     results: dict,
     llm_name: str,
     timestamp: str,
-    n_per_category: int = 7,
+    n_per_category: int = 3,
 ) -> None:
-    """Stratified samples for manual validation. ~21 items per condition."""
+    """Stratified samples for manual validation. ~9 items per condition,
+    ~108 items total across 6 conditions and 2 LLMs.
+    """
     sample_dir = RESULTS_DIR / f"hallucination_samples_{llm_name}_{timestamp}"
     sample_dir.mkdir(parents=True, exist_ok=True)
 
