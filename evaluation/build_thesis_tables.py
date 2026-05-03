@@ -195,15 +195,19 @@ def figures_confusion_matrices(eval_data: dict, out_dir: Path) -> None:
                 continue
 
             cm = np.array(cm)
+            display_labels = ["ABSTAIN" if lbl == "NOT_ENOUGH_EVIDENCE" else lbl
+                              for lbl in labels]
             fig, ax = plt.subplots(figsize=(6, 5))
             sns.heatmap(
                 cm, annot=True, fmt="d", cmap="Blues",
-                xticklabels=labels, yticklabels=labels,
+                xticklabels=display_labels, yticklabels=display_labels,
                 cbar_kws={"label": "Count"}, ax=ax,
             )
             ax.set_xlabel("Predicted")
             ax.set_ylabel("Ground truth")
             ax.set_title(f"{llm.title()} — {cond}")
+            plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
+            plt.setp(ax.get_yticklabels(), rotation=90, va="center")
             plt.tight_layout()
 
             safe_cond = cond.replace("+", "_plus_").replace("/", "_")
@@ -237,7 +241,7 @@ def figure_selective_tradeoff(eval_data: dict, out_dir: Path) -> None:
     ax.set_xlabel("Coverage")
     ax.set_ylabel("Selective accuracy")
     ax.set_title("Coverage vs Selective Accuracy (abstention-enabled conditions)")
-    ax.legend(fontsize=8, loc="lower left")
+    ax.legend(fontsize=8, loc="lower right")
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig(fig_dir / "coverage_selective_tradeoff.png", dpi=150)
