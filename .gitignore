@@ -32,8 +32,17 @@ data/faiss_index/
 *.safetensors
 *.gguf
 
-# Evaluations-Ergebnisse
-evaluation/results/
+# Evaluations-Ergebnisse: standardmäßig ignorieren, aber die kuratierten
+# Appendix-Artefakte (Thesis-Ergebnisse) explizit mit aufnehmen.
+evaluation/results/**
+!evaluation/results/**/
+!evaluation/results/eval_*.json
+!evaluation/results/hallucination_*.json
+!evaluation/results/Hallucinations_manual.csv
+!evaluation/results/thesis_output/**
+!evaluation/results/hallucination_samples_*/**
+# .DS_Store auch in den aufgenommenen Ergebnis-Ordnern weiterhin ausschließen
+evaluation/results/**/.DS_Store
 
 # IDE-Configs
 .idea/
