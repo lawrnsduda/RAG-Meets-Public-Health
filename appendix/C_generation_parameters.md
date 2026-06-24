@@ -14,8 +14,7 @@ pipeline.
 | Verdict LLM | Qwen3 8B | `qwen3:8b` (`500a1f067a9f`) | 5.2 GB |
 | Verdict LLM | Mistral 7B | `mistral:7b` (`6577803aa9a0`) | 4.4 GB |
 
-Both models use **Q4_K_M** GGUF quantisation and are served with **Ollama
-0.30.10**.
+Both models use **Q4_K_M** GGUF quantisation and are served with **Ollama 0.30.10**.
 
 ## C.2 Decoding parameters
 

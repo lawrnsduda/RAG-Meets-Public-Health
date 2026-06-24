@@ -27,10 +27,11 @@ results are:
 - `eval_mistral_20260427_120729.json`
 - `eval_qwen3_20260427_115110.json`
 
-> **EINFÜGEN:** per-condition wall-clock timing (total evaluation time and, where
-> available, mean seconds per claim) for each model and condition. Read these from
-> the run logs / timing fields on the local machine — the committed JSONs store
-> predictions and metrics but not wall-clock timing.
+Per-condition wall-clock timing was not instrumented during the evaluation runs
+and is therefore not reported — the evaluation script records predictions and
+metrics, but not run duration. The pipeline applies a fixed 0.1 s pause between
+claims; total runtime is dominated by local LLM inference (Qwen3 8B / Mistral 7B
+via Ollama) in the A100 environment described in D.1.
 
 ## D.3 Reproducing the runs
 

@@ -19,6 +19,8 @@ verdict based on evidence retrieved from trusted health and research sources.
 > thesis. Alongside the source code it ships the evaluation dataset, prompt
 > templates, configuration, and the generated results
 > (`evaluation/results/thesis_output/` and the raw run JSONs).
+> A consolidated reproducibility appendix (dataset documentation, verbatim
+> prompts, generation parameters, runtime) is collected in [`appendix/`](appendix/).
 
 ## Main Idea
 
@@ -110,6 +112,7 @@ confusion-matrix figures) are in `evaluation/results/thesis_output/`.
 
 ```text
 RAG-Meets-Public-Health/
+├── appendix/                          # Reproducibility appendix (dataset, prompts, parameters, runtime)
 ├── data/                              # Fetch scripts + FAISS index building
 │   └── measles_claims_dataset.csv     # 150 annotated evaluation claims
 ├── evaluation/                        # Evaluation, hallucination & agreement tooling
